@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Monitoring Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-dark text-white text-center py-4">
+        <h1>Air Quality Monitoring Dashboard</h1>
+        <p>Monitor air quality and weather in real-time for cities in South Korea</p>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">AQ Monitor</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#weatherApp">Weather App</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#weatherAnalysis">Weather Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Dashboard Section -->
+        <section id="dashboard">
+            <h2 class="mb-4">Air Quality Dashboard</h2>
+            <p>This section will display air quality metrics and visualizations.</p>
+            <canvas id="airQualityChart"></canvas>
+        </section>
+
+        <!-- Weather App Section -->
+        <section id="weatherApp" class="my-5">
+            <h2 class="mb-4">Weather App</h2>
+            <label for="cityDropdown" class="form-label">Select a City</label>
+            <select id="cityDropdown" class="form-select mb-3">
+                <option value="" disabled selected>Select a city...</option>
+            </select>
+
+            <!-- Weather Indicators -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="weather-indicator">
+                        <div class="icon">🌡️</div>
+                        <div class="value" id="temperature">-- °C</div>
+                        <div>Temperature</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="weather-indicator">
+                        <div class="icon">💧</div>
+                        <div class="value" id="humidity">-- %</div>
+                        <div>Humidity</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="weather-indicator">
+                        <div class="icon">💨</div>
+                        <div class="value" id="windSpeed">-- km/h</div>
+                        <div>Wind Speed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weather Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Weather Icon</th>
+                            <th>Description</th>
+                            <th>Temperature (°C)</th>
+                            <th>Feels Like (°C)</th>
+                            <th>Humidity (%)</th>
+                            <th>Wind Speed (km/h)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weatherTable"></tbody>
+                </table>
+            </div>
+
+            <!-- Weather Chart -->
+	<section id="weatherChart">
+            		<div class="mt-4 chart-container">
+                		<canvas id="barChart"></canvas>
+            </div>
+</section>
+        </section>
+
+        <!-- Weather Analysis Section -->
+        <section id="weatherAnalysis" class="my-5">
+            <h2 class="mb-4">Weather Analysis: Comparison to Historical Data</h2>
+            <p>In this section, we will compare current weather data to historical trends.</p>
+
+            <!-- Example: Temperature comparison chart -->
+            <div class="chart-container">
+                <canvas id="tempComparisonChart"></canvas>
+            </div>
+
+            <!-- Example: Humidity comparison chart -->
+            <div class="chart-container">
+                <canvas id="humidityComparisonChart"></canvas>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="my-5">
+            <h2>About</h2>
+            <p>
+                This dashboard provides real-time air quality and weather data for cities in South Korea. It uses 
+                reliable APIs for accurate information and includes visualizations for better data understanding.
+            </p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2024 Air Quality Monitoring Dashboard. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
