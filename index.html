@@ -1,62 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Air Quality Monitoring Dashboard</title>
+    <title>Air Quality & Weather Monitoring Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
-
 </head>
+
 <body>
     <!-- Header -->
     <header class="bg-dark text-white text-center py-4">
-        <h1>Air Quality Monitoring Dashboard</h1>
-        <p>Monitor air quality and weather in real-time for cities in South Korea</p>
+        <h1>Air Quality & Weather Monitoring Dashboard</h1>
+        <p>Real-time air quality and weather information for cities in South Korea</p>
     </header>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="#">AQ Monitor</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#dashboard">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#weatherApp">Weather App</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#weatherAnalysis">Weather Analysis</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#about">About</a>
-                    </li>
-                </ul>
-            </div>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <!-- Other links -->
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#weatherApp">Today's Weather</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#fiveDayFieldset">5-Day Forecast</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#dashboard">Air Quality dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#weatherAnalysis">Weather Analysis</a>
+                </li>
+                <!-- New Comparison Section -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#weatherComparison">Weather Comparison</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+
+
 
     <!-- Main Content -->
     <main class="container my-4">
-        <!-- Dashboard Section -->
-        <section id="dashboard">
-            <h2 class="mb-4">Air Quality Dashboard</h2>
-            <p>This section will display air quality metrics and visualizations.</p>
-            <canvas id="airQualityChart"></canvas>
-        </section>
-
         <!-- Weather App Section -->
         <section id="weatherApp" class="my-5">
             <h2 class="mb-4">Weather App</h2>
-            <label for="cityDropdown" class="form-label">Select a City</label>
-            <select id="cityDropdown" class="form-select mb-3">
-                <option value="" disabled selected>Select a city...</option>
-            </select>
+
+            <!-- Search and Selection -->
+            <div class="mb-3">
+                <label for="cityDropdown" class="form-label">Select a City</label>
+                <select id="cityDropdown" class="form-select">
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <fieldset class="weather-table-fieldset">
+                <legend>Today's Weather</legend>
+                <table class="table table-striped table-bordered" id="weatherTable">
+                    <thead>
+                        <tr>
+                            <th>Icon</th>
+                            <th>Description</th>
+                            <th>Temperature</th>
+                            <th>Feels Like</th>
+                            <th>Humidity</th>
+                            <th>Wind Speed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Weather data will be populated here -->
+                    </tbody>
+                </table>
+            </fieldset>
 
             <!-- Weather Indicators -->
             <div class="row">
@@ -83,29 +111,78 @@
                 </div>
             </div>
 
-            <!-- Weather Table -->
-            <div class="table-responsive">
-                <table class="table table-bordered text-center">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Weather Icon</th>
-                            <th>Description</th>
-                            <th>Temperature (°C)</th>
-                            <th>Feels Like (°C)</th>
-                            <th>Humidity (%)</th>
-                            <th>Wind Speed (km/h)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="weatherTable"></tbody>
-                </table>
-            </div>
+           
 
-            <!-- Weather Chart -->
-	<section id="weatherChart">
-            		<div class="mt-4 chart-container">
-                		<canvas id="barChart"></canvas>
+            <!-- 5-Day Forecast -->
+            <fieldset id="fiveDayFieldset" class="border p-3">
+                <legend>5-Day Forecast</legend>
+                <div id="forecastContainer" class="row">
+                    <!-- Forecast data will be populated here -->
+                </div>
+            </fieldset>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard">
+            <h2 class="mb-4">Air Quality Dashboard</h2>
+            <!-- City Dropdown -->
+            <div class="form-group mb-4">
+                <label for="citySelector">Choose City</label>
+                <select id="citySelector" class="form-control">
+                    <option value="Seoul">Seoul</option>
+                    <option value="Busan">Busan</option>
+                    <option value="Incheon">Incheon</option>
+                    <option value="Daegu">Daegu</option>
+                    <option value="Daejeon">Daejeon</option>
+                    <option value="Gwangju">Gwangju</option>
+                    <option value="Ulsan">Ulsan</option>
+                    <option value="Suwon">Suwon</option>
+                    <option value="Jeju">Jeju</option>
+                </select>
             </div>
-</section>
+    
+            <!-- Display Button -->
+            <div class="form-group mb-4">
+                <button id="displayButton" class="btn btn-primary">Display</button>
+            </div>
+    
+            <!-- Air Quality Widgets -->
+            <div id="airQualityWidgets" class="row">
+                <!-- AQI Widget -->
+                <div class="col-md-3">
+                    <div class="widget">
+                        <h4>AQI</h4>
+                        <p id="aqiValue">Loading...</p>
+                    </div>
+                </div>
+                <!-- PM2.5 Widget -->
+                <div class="col-md-3">
+                    <div class="widget">
+                        <h4>PM2.5</h4>
+                        <p id="pm25Value">Loading...</p>
+                    </div>
+                </div>
+                <!-- PM10 Widget -->
+                <div class="col-md-3">
+                    <div class="widget">
+                        <h4>PM10</h4>
+                        <p id="pm10Value">Loading...</p>
+                    </div>
+                </div>
+                <!-- NO2 Widget -->
+                <div class="col-md-3">
+                    <div class="widget">
+                        <h4>NO2</h4>
+                        <p id="no2Value">Loading...</p>
+                    </div>
+                </div>
+            </div>
+    
+      <!-- Chart Containers -->
+    <div class="chart-container">
+        <canvas id="airQualityDoughnutChart"></canvas>
+    </div>
+    
         </section>
 
         <!-- Weather Analysis Section -->
@@ -117,18 +194,76 @@
             <div class="chart-container">
                 <canvas id="tempComparisonChart"></canvas>
             </div>
-
-            <!-- Example: Humidity comparison chart -->
-            <div class="chart-container">
-                <canvas id="humidityComparisonChart"></canvas>
-            </div>
         </section>
+
+       <!-- Weather Comparison Section -->
+<section id="weatherComparison" class="my-5">
+    <fieldset class="border p-3">
+        <h2 class="mb-4">Weather Comparison: Compare Two Cities </h2>
+        <p>Select two cities and choose weather parameters to compare.</p>
+
+        <!-- City Selection -->
+        <div class="form-group">
+            <label for="cityChoice1">Select City 1:</label>
+            <select class="form-control" id="cityChoice1">
+                <option value="Seoul">Seoul</option>
+                <option value="Busan">Busan</option>
+                <option value="Incheon">Incheon</option>
+                <option value="Daegu">Daegu</option>
+                <option value="Daejeon">Daejeon</option>
+                <option value="Gwangju">Gwangju</option>
+                <option value="Ulsan">Ulsan</option>
+                <option value="Suwon">Suwon</option>
+                <option value="Jeju">Jeju</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="cityChoice2">Select City 2:</label>
+            <select class="form-control" id="cityChoice2">
+                <option value="Seoul">Seoul</option>
+                <option value="Busan">Busan</option>
+                <option value="Incheon">Incheon</option>
+                <option value="Daegu">Daegu</option>
+                <option value="Daejeon">Daejeon</option>
+                <option value="Gwangju">Gwangju</option>
+                <option value="Ulsan">Ulsan</option>
+                <option value="Suwon">Suwon</option>
+                <option value="Jeju">Jeju</option>
+            </select>
+        </div>
+
+        <!-- Weather Parameters to Compare -->
+        <div class="form-group">
+            <label>Select Parameters to Compare:</label><br>
+            <input type="checkbox" id="compareTemp" checked> Temperature
+            <input type="checkbox" id="compareHumidity" checked> Humidity
+            <input type="checkbox" id="comparePressure"> Pressure
+            <input type="checkbox" id="compareWind"> Wind Speed
+            <input type="checkbox" id="compareCloudiness"> Cloudiness
+            <input type="checkbox" id="compareRain"> Rain
+            <input type="checkbox" id="compareSnow"> Snow
+        </div>
+
+        <!-- Compare Button -->
+        <button id="compareButton" class="btn btn-primary">Compare</button>
+
+        <!-- Chart Display -->
+        <div class="chart-container">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+    </fieldset>
+</section>
+
+        
+    
+
 
         <!-- About Section -->
         <section id="about" class="my-5">
             <h2>About</h2>
             <p>
-                This dashboard provides real-time air quality and weather data for cities in South Korea. It uses 
+                This dashboard provides real-time air quality and weather data for cities in South Korea. It uses
                 reliable APIs for accurate information and includes visualizations for better data understanding.
             </p>
         </section>
@@ -136,11 +271,13 @@
 
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3">
-        <p>&copy; 2024 Air Quality Monitoring Dashboard. Web Programming course Pak Elina </p>
+        <p>&copy; 2024 Air Quality Monitoring Dashboard. Web Programming course Pak Elina</p>
     </footer>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

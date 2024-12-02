@@ -1,75 +1,361 @@
+/* Global Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Nunito', Arial, sans-serif;
     line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
 }
 
+/* Header */
 header {
     background: linear-gradient(to right, #007bff, #0056b3);
+    color: white;
+    text-align: center;
+    padding: 20px 0;
 }
 
-nav .navbar-nav .nav-link {
+header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+header p {
+    font-size: 1.2rem;
+    margin: 5px 0 0;
+}
+
+/* Navigation Bar */
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000; 
+    background: #fff; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.navbar .navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-nav .nav-link {
     font-size: 1.2rem;
 }
 
+/* Style changes when the navbar is scrolled */
+.navbar.scrolled {
+    background-color: #0056b3; /* Change to any color you prefer */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Main Content */
 main h2 {
     border-bottom: 2px solid #0056b3;
     margin-bottom: 20px;
     padding-bottom: 5px;
     color: #0056b3;
+    font-size: 1.8rem;
 }
 
-        /* Custom styles to make the weather app board smaller */
-        #weatherApp {
-            margin: 0 auto;
-            padding: 20px;
-        }
+main p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
 
-        /* Optional: You can also scale down the table for better fit */
-        #weatherApp .table {
-            font-size: 0.9rem;
-        }
+/* Weather App Section */
+#weatherApp {
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-        /* Optional: Adjust the chart size for a more compact look */
-        #weatherApp canvas {
-            max-width: 100%;
-            height: 300px;
-        }
+#weatherApp .btn {
+    margin-top: 10px;
+}
 
-        /* Styling for the weather indicators like temperature, humidity, etc. */
-        .weather-indicator {
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            margin: 10px 0;
-        }
-	#weatherChart{
-	max-width:950px
-	
-       }
-        .weather-indicator .icon {
-            font-size: 2rem;
-        }
+/* Weather Indicators */
+.weather-indicator {
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    margin: 10px 0;
+    background: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-        .weather-indicator .value {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
+.weather-indicator:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
 
-        .navbar-brand {
-            font-weight: bold;
-        }
+.weather-indicator .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
 
-        .progress-bar {
-            transition: width 0.6s ease;
-        }
+/* 5-Day Forecast Section */
+#fiveDayFieldset {
+    background-color: #fff;
+    border: 2px solid #007bff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
 
-        /* Styling for weather analysis */
-        #weatherAnalysis {
-            margin: 0 auto;
-            padding: 20px;
-        }
+#fiveDayFieldset legend {
+    color: black;
+    font-size: 1.6rem;
+}
 
-        .chart-container {
-            margin-top: 20px;
-        }
+/* Forecast Container */
+#forecastContainer {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    padding-top: 10px;
+}
+
+/* Forecast Card */
+.forecast-card {
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.forecast-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.forecast-card .date {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.forecast-card img {
+    width: 50px;
+    height: 50px;
+    margin: 10px 0;
+}
+
+.forecast-card .temperature {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.forecast-card .condition {
+    font-size: 1.1rem;
+    color: #777;
+}
+
+/* Table Styling for Weather App */
+.weather-table, #weatherApp .table {
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    padding: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Table Header */
+.weather-table th, #weatherApp .table th {
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* Table Cells */
+.weather-table td, #weatherApp .table td {
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.9rem;
+}
+
+/* Hover Effect for Tables */
+.weather-table:hover, #weatherApp .table:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Table Row Hover Effect */
+.weather-table tr:hover, #weatherApp .table tr:hover {
+    background-color: #e3f2fd;
+}
+
+/* Chart Styling */
+#weatherApp canvas,
+#weatherAnalysis canvas {
+    max-width: 100%;
+    height: 300px;
+    margin: 0 auto;
+}
+
+.chart-container {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+}
+
+/* Weather Analysis Section */
+#weatherAnalysis {
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+footer {
+    background: #0056b3;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+}
+
+footer p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 1rem;
+    }
+
+    main h2 {
+        font-size: 1.5rem;
+    }
+
+    .weather-indicator .value {
+        font-size: 1.2rem;
+    }
+
+    #weatherApp .table {
+        font-size: 0.8rem;
+        padding: 5px;
+    }
+
+    #forecastContainer {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+/* Add styling to the new Weather Comparison Section */
+#weatherComparison {
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#weatherComparison fieldset {
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+
+#weatherComparison .form-group {
+    margin-bottom: 15px;
+}
+
+#weatherComparison .form-control {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+#weatherComparison .btn {
+    margin-top: 15px;
+}
+
+/* Air Quality Dashboard Section */
+#dashboard {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+#dashboard p {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+/* City Dropdown */
+#citySelector {
+    font-size: 1.1rem;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+/* Widgets Style */
+.widget {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.widget:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.widget h4 {
+    font-size: 1.2rem;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.widget p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Chart Container */
+.chart-container {
+    max-width: 50%;
+}
+
+@media (max-width: 768px) {
+    .widget {
+        margin-bottom: 15px;
+    }
+    #airQualityWidgets {
+        flex-direction: column;
+    }
+}
