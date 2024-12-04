@@ -426,3 +426,47 @@ footer p {
         flex-direction: column;
     }
 }
+
+
+.language-dropdown {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.language-dropdown select {
+    padding: 5px 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.language-dropdown select:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+#sunrise-sunset{
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#defaultLocationData,
+#cityDataContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+.sunset-sunrise-image {
+    width: 150px;
+    height: auto;
+    margin: 10px 0;
+}

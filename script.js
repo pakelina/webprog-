@@ -638,3 +638,49 @@ async function updateRainLayer(lat, lon) {
 
 document.getElementById('showMapButton').addEventListener('click', initializeMap);
 
+function redirectToLanguagePage() {
+    const languageSelect = document.getElementById("languageSelect");
+    const selectedLanguage = languageSelect.value;
+
+    if (selectedLanguage === "en") {
+        window.location.href = "index.html"; // English version
+    } else if (selectedLanguage === "kr") {
+        window.location.href = "index_kr.html"; // Korean version
+    }
+}
+
+
+// API Key
+const ak = "27803163eb13b8bbb98e6a5c56f7da5b"; 
+// Get Sunrise/Sunset Data
+async function fetchSunsetSunrise(lat, lon) {
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${ak}`;
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString();
+    const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString();
+    return { sunrise, sunset };
+}
+
+// Display Data
+function displaySunriseSunset(containerId, sunrise, sunset) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = `
+        <img src="assets/sunrise.png" alt="Sunrise" class="sunset-sunrise-image">
+        <p><strong>Sunrise:</strong> ${sunrise}</p>
+        <img src="assets/sunset.png" alt="Sunset" class="sunset-sunrise-image">
+        <p><strong>Sunset:</strong> ${sunset}</p>
+    `;
+}
+
+// Fetch Geolocation Data
+navigator.geolocation.getCurrentPosition(
+    async (position) => {
+        const { latitude, longitude } = position.coords;
+        const { sunrise, sunset } = await fetchSunsetSunrise(latitude, longitude);
+        displaySunriseSunset("defaultLocationData", sunrise, sunset);
+    },
+    (error) => {
+        document.getElementById("defaultLocationData").innerHTML = `<p>Unable to fetch location. Please enable location services.</p>`;
+    }
+);

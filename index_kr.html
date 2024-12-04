@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="kr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대기질 및 날씨 모니터링 대시보드</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="bg-dark text-white text-center py-4">
+        <h1>대기질 및 날씨 모니터링 대시보드</h1>
+        <p>대한민국 도시의 실시간 대기질 및 날씨 정보</p>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">소개</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#weatherApp">오늘의 날씨</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#fiveDayFieldset">5일 예보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#dashboard">대기질 대시보드</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#alertsSection">날씨 경고</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#precipitationMap">지도</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#weatherComparison">날씨 비교</a>
+                    </li>
+                </ul>
+                <div class="language-dropdown">
+                    <select id="languageSelect" onchange="redirectToLanguagePage()">
+                        <option value="en">🇺🇸 English</option>
+                        <option value="kr" selected>🇰🇷 한국어</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- About Section -->
+        <section id="about" class="my-5">
+            <h2>소개</h2>
+            <p>
+                이 대시보드는 대한민국 도시의 <span style="color:red">실시간</span> 대기질 및 날씨 데이터를 제공합니다.
+                정확한 정보를 위해 <span style="font-weight: bold;">Open Weather API</span>를 사용하며, 데이터를 더 잘 이해할 수 있도록 시각화를 포함합니다.
+            </p>
+        </section>
+        <!-- Weather App Section -->
+        <section id="weatherApp" class="my-5">
+            <h2 class="mb-4">날씨 앱</h2>
+            <div class="mb-3">
+                <label for="cityDropdown" class="form-label">도시 선택</label>
+                <select id="cityDropdown" class="form-select">
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <fieldset class="weather-table-fieldset">
+                <legend>오늘의 날씨</legend>
+                <table class="table table-striped table-bordered" id="weatherTable">
+                    <thead>
+                        <tr>
+                            <th>아이콘</th>
+                            <th>설명</th>
+                            <th>온도</th>
+                            <th>체감 온도</th>
+                            <th>습도</th>
+                            <th>풍속</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Weather data will be populated here -->
+                    </tbody>
+                </table>
+            </fieldset>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="weather-indicator">
+                        <div class="icon">🌡️</div>
+                        <div class="value" id="temperature">-- °C</div>
+                        <div>온도</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="weather-indicator">
+                        <div class="icon">💧</div>
+                        <div class="value" id="humidity">-- %</div>
+                        <div>습도</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="weather-indicator">
+                        <div class="icon">💨</div>
+                        <div class="value" id="windSpeed">-- km/h</div>
+                        <div>풍속</div>
+                    </div>
+                </div>
+            </div>
+            <fieldset id="fiveDayFieldset" class="border p-3">
+                <legend>5일 예보</legend>
+                <div id="forecastContainer" class="row">
+                    <!-- Forecast data will be populated here -->
+                </div>
+            </fieldset>
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard">
+            <h2 class="mb-4">대기질 대시보드</h2>
+            <div class="form-group mb-4">
+                <label for="citySelector">도시 선택</label>
+                <select id="citySelect" class="form-control">
+                    <option value="seoul">서울</option>
+                    <option value="busan">부산</option>
+                    <option value="incheon">인천</option>
+                    <option value="daegu">대구</option>
+                    <option value="daejeon">대전</option>
+                    <option value="gwangju">광주</option>
+                    <option value="ulsan">울산</option>
+                    <option value="suwon">수원</option>
+                    <option value="jeju">제주</option>
+                </select>
+            </div>
+        <!-- Display Button -->
+        <div class="form-group mb-4">
+            <button id="displayButton" class="btn btn-primary">표시</button>
+        </div>
+
+        <!-- Air Quality Widgets -->
+        <div id="airQualityWidgets" class="row"></div>
+
+        <!-- Doughnut Chart -->
+        <div class="mt-5">
+            <canvas id="aqiChart" width="400" height="400"></canvas>
+        </div>
+    </section>
+    
+    <!-- Weather Alerts Section -->
+    <section id="alertsSection" class="my-5">
+        <div>
+            <h2>날씨 경고</h2>
+            <button id="fetchAlertsButton">날씨 경고 표시</button>
+            <div id="alertsContainer">
+                <p>표시할 경고가 없습니다.</p>
+                <p>대한민국의 최신 날씨 경고를 가져오려면 버튼을 클릭하세요.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rain Precipitation Map Section -->
+    <section id="precipitationMap" class="my-5">
+        <h2 class="mb-4">강수량 지도</h2>
+        <div class="form-group mb-4">
+            <button id="showMapButton" class="btn btn-primary">지도 표시</button>
+        </div>
+        <div id="mapContainer" style="display: none;">
+            <div id="map" style="height: 500px; width: 100%;"></div>
+        </div>
+    </section>
+
+    <!-- Weather Comparison Section -->
+    <section id="weatherComparison" class="my-5">
+        <fieldset class="border p-3">
+            <h2 class="mb-4">날씨 비교: 두 도시 비교</h2>
+            <p>두 도시를 선택하고 비교할 날씨 요소를 선택하세요.</p>
+
+            <!-- City Selection -->
+            <div class="form-group">
+                <label for="cityChoice1">도시 1 선택:</label>
+                <select class="form-control" id="cityChoice1">
+                    <option value="Seoul">서울</option>
+                    <option value="Busan">부산</option>
+                    <option value="Incheon">인천</option>
+                    <option value="Daegu">대구</option>
+                    <option value="Daejeon">대전</option>
+                    <option value="Gwangju">광주</option>
+                    <option value="Ulsan">울산</option>
+                    <option value="Suwon">수원</option>
+                    <option value="Jeju">제주</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cityChoice2">도시 2 선택:</label>
+                <select class="form-control" id="cityChoice2">
+                    <option value="Seoul">서울</option>
+                    <option value="Busan">부산</option>
+                    <option value="Incheon">인천</option>
+                    <option value="Daegu">대구</option>
+                    <option value="Daejeon">대전</option>
+                    <option value="Gwangju">광주</option>
+                    <option value="Ulsan">울산</option>
+                    <option value="Suwon">수원</option>
+                    <option value="Jeju">제주</option>
+                </select>
+            </div>
+
+            <!-- Weather Parameters to Compare -->
+            <div class="form-group">
+                <label>비교할 요소 선택:</label><br>
+                <input type="checkbox" id="compareTemp" checked> 온도
+                <input type="checkbox" id="compareHumidity" checked> 습도
+                <input type="checkbox" id="comparePressure"> 기압
+                <input type="checkbox" id="compareWind"> 풍속
+                <input type="checkbox" id="compareCloudiness"> 구름량
+                <input type="checkbox" id="compareRain"> 강수량
+                <input type="checkbox" id="compareSnow"> 적설량
+            </div>
+
+            <!-- Compare Button -->
+            <button id="compareButton" class="btn btn-primary">비교</button>
+
+            <!-- Chart Display -->
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </fieldset>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3">
+    <p>&copy; 웹 프로그래밍 강의 프로젝트 2024, Pak Elina</p>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -50,7 +50,16 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#weatherComparison">Weather Comparison</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#sunrise-sunset">Sunrise/Sunset</a>
+                </li>
             </ul>
+            <div class="language-dropdown">
+                <select id="languageSelect" onchange="redirectToLanguagePage()">
+                    <option value="en" selected>🇺🇸 English</option>
+                    <option value="kr">🇰🇷 한국어</option>
+                </select>
+            </div>                              
         </div>
     </div>
 </nav>
@@ -247,6 +256,15 @@
         </div>
     </fieldset>
 </section>
+
+<section class="my-5", id="sunrise-sunset">
+    <h2>Sunrise and Sunset Times</h2>
+    <div id="defaultLocationData" class="mt-2">
+        <p>Fetching sunrise and sunset times for your location...</p>
+    </div>
+    <hr>
+</div>
+
     </main>
 
     <!-- Footer -->
