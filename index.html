@@ -7,6 +7,7 @@
     <title>Air Quality & Weather Monitoring Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
 <body>
@@ -29,6 +30,9 @@
                     <a class="nav-link active" href="#">Home</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li> 
+                <li class="nav-item">
                     <a class="nav-link" href="#weatherApp">Today's Weather</a>
                 </li>
                 <li class="nav-item">
@@ -38,14 +42,13 @@
                     <a class="nav-link" href="#dashboard">Air Quality dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#weatherAnalysis">Weather Analysis</a>
+                    <a class="nav-link" href="#alertsSection">Weather Alerts</a>
                 </li>
-                <!-- New Comparison Section -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#precipitationMap">Map</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#weatherComparison">Weather Comparison</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#about">About</a>
                 </li>
             </ul>
         </div>
@@ -53,9 +56,16 @@
 </nav>
 
 
-
     <!-- Main Content -->
     <main class="container my-4">
+        <!-- About Section -->
+        <section id="about" class="my-5">
+            <h2>About</h2>
+            <p>
+                This dashboard provides <span style="color:red">real-time</span> air quality and weather data for cities in South Korea. It uses
+                reliable <span style="font-weight: bold;">Open Weather API</span> for accurate information and includes visualizations for better data understanding.
+            </p>
+        </section>
         <!-- Weather App Section -->
         <section id="weatherApp" class="my-5">
             <h2 class="mb-4">Weather App</h2>
@@ -110,9 +120,6 @@
                     </div>
                 </div>
             </div>
-
-           
-
             <!-- 5-Day Forecast -->
             <fieldset id="fiveDayFieldset" class="border p-3">
                 <legend>5-Day Forecast</legend>
@@ -125,76 +132,62 @@
         <!-- Dashboard Section -->
         <section id="dashboard">
             <h2 class="mb-4">Air Quality Dashboard</h2>
+        
             <!-- City Dropdown -->
             <div class="form-group mb-4">
                 <label for="citySelector">Choose City</label>
-                <select id="citySelector" class="form-control">
-                    <option value="Seoul">Seoul</option>
-                    <option value="Busan">Busan</option>
-                    <option value="Incheon">Incheon</option>
-                    <option value="Daegu">Daegu</option>
-                    <option value="Daejeon">Daejeon</option>
-                    <option value="Gwangju">Gwangju</option>
-                    <option value="Ulsan">Ulsan</option>
-                    <option value="Suwon">Suwon</option>
-                    <option value="Jeju">Jeju</option>
+                <select id="citySelect" class="form-control">
+                    <option value="seoul">Seoul</option>
+                    <option value="busan">Busan</option>
+                    <option value="incheon">Incheon</option>
+                    <option value="daegu">Daegu</option>
+                    <option value="daejeon">Daejeon</option>
+                    <option value="gwangju">Gwangju</option>
+                    <option value="ulsan">Ulsan</option>
+                    <option value="suwon">Suwon</option>
+                    <option value="jeju">Jeju</option>
                 </select>
             </div>
-    
+        
             <!-- Display Button -->
-            <div class="form-group mb-4">
+             <div class="form-group mb-4">
                 <button id="displayButton" class="btn btn-primary">Display</button>
             </div>
-    
+
             <!-- Air Quality Widgets -->
-            <div id="airQualityWidgets" class="row">
-                <!-- AQI Widget -->
-                <div class="col-md-3">
-                    <div class="widget">
-                        <h4>AQI</h4>
-                        <p id="aqiValue">Loading...</p>
-                    </div>
-                </div>
-                <!-- PM2.5 Widget -->
-                <div class="col-md-3">
-                    <div class="widget">
-                        <h4>PM2.5</h4>
-                        <p id="pm25Value">Loading...</p>
-                    </div>
-                </div>
-                <!-- PM10 Widget -->
-                <div class="col-md-3">
-                    <div class="widget">
-                        <h4>PM10</h4>
-                        <p id="pm10Value">Loading...</p>
-                    </div>
-                </div>
-                <!-- NO2 Widget -->
-                <div class="col-md-3">
-                    <div class="widget">
-                        <h4>NO2</h4>
-                        <p id="no2Value">Loading...</p>
-                    </div>
+            <div id="airQualityWidgets" class="row"></div>
+
+            <!-- Doughnut Chart -->
+            <div class="mt-5">
+                <canvas id="aqiChart" width="400" height="400"></canvas>
+            </div>
+
+        </section>
+        
+        <section id="alertsSection" class="my-5">
+            <div>
+                <h2>Weather Alerts</h2>
+                <button id="fetchAlertsButton">Display Weather Alerts</button>
+                <div id="alertsContainer">
+                    <p>No alerts to display.</p>
+                    <p>Click the button to fetch the latest weather alerts for Korea.</p>
                 </div>
             </div>
-    
-      <!-- Chart Containers -->
-    <div class="chart-container">
-        <canvas id="airQualityDoughnutChart"></canvas>
-    </div>
-    
         </section>
 
-        <!-- Weather Analysis Section -->
-        <section id="weatherAnalysis" class="my-5">
-            <h2 class="mb-4">Weather Analysis: Comparison to Historical Data</h2>
-            <p>In this section, we will compare current weather data to historical trends.</p>
-
-            <!-- Example: Temperature comparison chart -->
-            <div class="chart-container">
-                <canvas id="tempComparisonChart"></canvas>
+        <section id="precipitationMap" class="my-5">
+            <h2 class="mb-4">Rain Precipitation Map</h2>
+        
+            <div class="form-group mb-4">
+                <button id="showMapButton" class="btn btn-primary">Show Map</button>
+            </div>
+        
+            <!-- Map Container (hidden initially) -->
+            <div id="mapContainer" style="display: none;">
+                <div id="map" style="height: 500px; width: 100%;"></div>
             </div>
         </section>
+        
 
        <!-- Weather Comparison Section -->
 <section id="weatherComparison" class="my-5">
@@ -254,29 +247,17 @@
         </div>
     </fieldset>
 </section>
-
-        
-    
-
-
-        <!-- About Section -->
-        <section id="about" class="my-5">
-            <h2>About</h2>
-            <p>
-                This dashboard provides real-time air quality and weather data for cities in South Korea. It uses
-                reliable APIs for accurate information and includes visualizations for better data understanding.
-            </p>
-        </section>
     </main>
 
     <!-- Footer -->
     <footer class="bg-dark text-white text-center py-3">
-        <p>&copy; 2024 Air Quality Monitoring Dashboard. Web Programming course Pak Elina</p>
+        <p>&copy; Web Programming course project 2024, Pak Elina</p>
     </footer>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 

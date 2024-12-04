@@ -157,42 +157,101 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Display the 5-day forecast
-    function displayForecast(data) {
-        forecastContainer.innerHTML = ''; 
+   // Display the 5-day forecast
+   function displayForecast(data) {
+    forecastContainer.innerHTML = ''; 
 
-        for (let i = 0; i < data.list.length; i += 8) {
-            const forecast = data.list[i];
-            const date = new Date(forecast.dt * 1000);
-            const day = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    for (let i = 0; i < data.list.length; i += 8) {
+        const forecast = data.list[i];
+        const date = new Date(forecast.dt * 1000);
+        const day = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
-            const forecastDiv = document.createElement('div');
-            forecastDiv.classList.add('forecast');
-            forecastDiv.innerHTML = `
-                <h3>${day}</h3>
-                <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}.png" alt="${forecast.weather[0].description}" width="50">
-                <p>${forecast.weather[0].description}</p>
-                <p>Temp: ${forecast.main.temp} °C</p>
-                <p>Feels Like: ${forecast.main.feels_like} °C</p>
-                <p>Humidity: ${forecast.main.humidity} %</p>
-                <p>Wind Speed: ${forecast.wind.speed} km/h</p>
-            `;
-            forecastContainer.appendChild(forecastDiv);
-        }
+        const forecastDiv = document.createElement('div');
+        forecastDiv.classList.add('forecast');
+        forecastDiv.innerHTML = `
+            <h3>${day}</h3>
+            <img src="http://openweathermap.org/img/wn/${forecast.weather[0].icon}.png" alt="${forecast.weather[0].description}" width="50">
+            <p>${forecast.weather[0].description}</p>
+            <p>Temp: ${forecast.main.temp} °C</p>
+            <p>Feels Like: ${forecast.main.feels_like} °C</p>
+            <p>Humidity: ${forecast.main.humidity} %</p>
+            <p>Wind Speed: ${forecast.wind.speed} km/h</p>
+        `;
+        forecastContainer.appendChild(forecastDiv);
     }
+}
 
-    // Event listener for dropdown
-    cityDropdown.addEventListener('change', (e) => {
-        const selectedCity = e.target.value;
-        if (selectedCity) fetchWeatherData(selectedCity);
-    });
+// Get user's geolocation and set default city
+function getUserGeolocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                fetchWeatherDataByCoords(lat, lon);
+            },
+            () => {
+                // If geolocation fails or is denied, default to Seoul
+                console.log('Geolocation failed, using default city: Seoul');
+                fetchWeatherData('Seoul');
+            }
+        );
+    } else {
+        console.log('Geolocation is not supported by this browser, using default city: Seoul');
+        fetchWeatherData('Seoul');
+    }
+}
 
-    // Initialize dropdown and load default city
-    populateDropdown();
-    fetchWeatherData('Seoul');
+// Fetch weather data by coordinates
+async function fetchWeatherDataByCoords(lat, lon) {
+    try {
+        const response = await fetch(
+            `${OPENWEATHERMAP_API_BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+        );
+        if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+
+        const data = await response.json();
+        updateWeatherIndicators(data);
+        displayWeatherTable(data);
+        renderCharts(data);
+        fetchForecastDataByCoords(lat, lon); // Fetch forecast
+    } catch (error) {
+        console.error('Error fetching weather data by coordinates:', error);
+        alert(`Failed to fetch weather data: ${error.message}`);
+    }
+}
+
+// Fetch 5-day forecast data by coordinates
+async function fetchForecastDataByCoords(lat, lon) {
+    try {
+        const response = await fetch(
+            `${OPENWEATHERMAP_API_BASE_URL}/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+        );
+        if (!response.ok) throw new Error(`API request failed: ${response.statusText}`);
+
+        const data = await response.json();
+        displayForecast(data);
+    } catch (error) {
+        console.error('Error fetching forecast data by coordinates:', error);
+        alert(`Failed to fetch forecast data: ${error.message}`);
+    }
+}
+
+// Event listener for dropdown
+cityDropdown.addEventListener('change', (event) => {
+    const selectedCity = event.target.value;
+    if (selectedCity) {
+        fetchWeatherData(selectedCity);
+    }
 });
 
-const apiKey = '0ae71d2e563a5e1913d7a52e757a6611'; 
+// Initialize the page
+populateDropdown();
+getUserGeolocation();
+});
+
+
+const apiKey = '27803163eb13b8bbb98e6a5c56f7da5b'; 
 // Mapping cities to their coordinates
 const cityCoordinates = {
     'Seoul': { lat: 37.5665, lon: 126.978 },
@@ -358,101 +417,224 @@ document.getElementById("displayButton").addEventListener("click", function() {
     fetchAirQualityData(city);
 });
 
-let airQualityChart; // To store the chart instance
 
-// Function to fetch air quality data
-async function fetchAirQualityData(city) {
-    const apiKey = "27803163eb13b8bbb98e6a5c56f7da5b";
-    const cityCoordinates = {
-        'Seoul': { lat: 37.5665, lon: 126.978 },
-        'Busan': { lat: 35.1796, lon: 129.0756 },
-        'Incheon': { lat: 37.4563, lon: 126.7052 },
-        'Daegu': { lat: 35.868, lon: 128.601 },
-        'Daejeon': { lat: 36.3504, lon: 127.3845 },
-        'Gwangju': { lat: 35.1595, lon: 126.8526 },
-        'Ulsan': { lat: 35.5383, lon: 129.3114 },
-        'Suwon': { lat: 37.2636, lon: 127.0286 },
-        'Jeju': { lat: 33.4996, lon: 126.5312 }
-    };
 
-    const coordinates = cityCoordinates[city];
-    const apiUrl = `https://api.openweathermap.org/data/2.5/air_pollution?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${apiKey}&units=metric`;
+async function fetchWeatherAlerts() {
+    const apiKey = "5b2b2cfa2ff34dd982f132231240212"; // Replace with your WeatherAPI key
+    const koreaLocation = "South Korea";
+
+    const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${encodeURIComponent(koreaLocation)}&days=1&alerts=yes`;
+
     try {
         const response = await fetch(apiUrl);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data = await response.json();
 
-        // Check if the data structure is valid
-        if (data && data.list && data.list[0] && data.list[0].components) {
-            // Populate the widgets
-            document.getElementById("aqiValue").textContent = data.list[0].main.aqi || "N/A";
-            document.getElementById("pm25Value").textContent = data.list[0].components.pm2_5 || "N/A";
-            document.getElementById("pm10Value").textContent = data.list[0].components.pm10 || "N/A";
-            document.getElementById("no2Value").textContent = data.list[0].components.no2 || "N/A";
+        console.log("WeatherAPI Alerts Response:", data); // Debugging the API response
 
-            // Update the chart with the fetched data
-            updateAirQualityChart(data.list[0].components);
+        if (data.alerts && data.alerts.alert.length > 0) {
+            displayWeatherAlerts(data.alerts.alert);
         } else {
-            throw new Error("Invalid data structure returned from API.");
+            document.getElementById("alertsContainer").innerHTML = "<p>No active weather alerts for Korea.</p>";
         }
     } catch (error) {
-        console.error("Error fetching air quality data:", error);
-        alert("Error fetching air quality data. Please try again.");
+        console.error("Error fetching weather alerts:", error);
+        document.getElementById("alertsContainer").innerHTML = "<p>Error fetching weather alerts. Please try again later.</p>";
     }
 }
 
-// Function to update the air quality chart
-function updateAirQualityChart(components) {
-    const ctx = document.getElementById('airQualityChart').getContext('2d');
+function displayWeatherAlerts(alerts) {
+    const container = document.getElementById("alertsContainer");
+    container.innerHTML = ""; // Clear existing alerts
 
-    // Data for the chart based on fetched components
-    const chartData = {
-        labels: ['PM2.5', 'PM10', 'NO2', 'O3', 'CO', 'SO2'],
-        datasets: [{
-            label: 'Air Quality Components',
-            data: [
-                components.pm2_5 || 0,
-                components.pm10 || 0,
-                components.no2 || 0,
-                components.o3 || 0,
-                components.co || 0,
-                components.so2 || 0
-            ],
-            backgroundColor: ['#ff6b6b', '#ffb142', '#1e90ff', '#32cd32', '#f0e68c', '#8a2be2'],
-            borderColor: ['#ff6b6b', '#ffb142', '#1e90ff', '#32cd32', '#f0e68c', '#8a2be2'],
-            borderWidth: 1
-        }]
-    };
+    alerts.forEach(alert => {
+        const alertDiv = document.createElement("div");
+        alertDiv.classList.add("alert");
 
-    const chartOptions = {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    };
+        alertDiv.innerHTML = `
+            <h3>${alert.headline}</h3>
+            <p><strong>Severity:</strong> ${alert.severity}</p>
+            <p><strong>Effective:</strong> ${new Date(alert.effective).toLocaleString()}</p>
+            <p><strong>Expires:</strong> ${new Date(alert.expires).toLocaleString()}</p>
+            <p>${alert.desc}</p>
+        `;
 
-    // Destroy the previous chart if it exists
-    if (airQualityChart) {
-        airQualityChart.destroy();
-    }
-
-    // Create a new chart
-    airQualityChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: chartData,
-        options: chartOptions
+        container.appendChild(alertDiv);
     });
-    
 }
 
-// Call fetchAirQualityData when "Display" button is clicked
-document.getElementById("displayButton").addEventListener("click", function() {
-    const selectedCity = document.getElementById("citySelect").value;
-    fetchAirQualityData(selectedCity);
+document.getElementById("fetchAlertsButton").addEventListener("click", fetchWeatherAlerts);
+
+
+
+const API_KEY = '27803163eb13b8bbb98e6a5c56f7da5b'; 
+const cityC = {
+    seoul: { lat: 37.5665, lon: 126.9780 },
+    busan: { lat: 35.1796, lon: 129.0756 },
+    incheon: { lat: 37.4563, lon: 126.7052 },
+    daegu: { lat: 35.8714, lon: 128.6014 },
+    daejeon: { lat: 36.3504, lon: 127.3845 },
+    gwangju: { lat: 35.1595, lon: 126.8526 },
+    ulsan: { lat: 35.5384, lon: 129.3114 },
+    suwon: { lat: 37.2636, lon: 127.0286 },
+    jeju: { lat: 33.4996, lon: 126.5312 }
+};
+
+const airQualityLevels = ["Good", "Fair", "Moderate", "Poor", "Very Poor"];
+const displayButton = document.getElementById('displayButton');
+const airQualityWidgets = document.getElementById('airQualityWidgets');
+const aqiChartCtx = document.getElementById('aqiChart').getContext('2d');
+let aqiChart; // Chart instance
+
+displayButton.addEventListener('click', async () => {
+    const selectedCity = document.getElementById('citySelect').value;
+    const { lat, lon } = cityC[selectedCity];
+
+    try {
+        // Fetch air quality data
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`);
+        const data = await response.json();
+        const aqi = data.list[0].main.aqi;
+        const pollutants = data.list[0].components;
+
+        // Display widgets
+        airQualityWidgets.innerHTML = `
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">PM2.5</h5>
+                        <p class="card-text">${pollutants.pm2_5} µg/m³</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">PM10</h5>
+                        <p class="card-text">${pollutants.pm10} µg/m³</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">CO</h5>
+                        <p class="card-text">${pollutants.co} µg/m³</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">NO</h5>
+                        <p class="card-text">${pollutants.no} µg/m³</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">O₃</h5>
+                        <p class="card-text">${pollutants.o3} µg/m³</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">SO₂</h5>
+                        <p class="card-text">${pollutants.so2} µg/m³</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Update Doughnut Chart
+        if (aqiChart) aqiChart.destroy(); // Destroy previous chart if exists
+        aqiChart = new Chart(aqiChartCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Good', 'Fair', 'Moderate', 'Poor', 'Very Poor'],
+                datasets: [{
+                    data: airQualityLevels.map((_, i) => (i + 1 === aqi ? 100 : 20)),
+                    backgroundColor: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c', '#8e44ad']
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: { callbacks: { label: (context) => context.label + ": " + context.raw + "%" } }
+                },
+                maintainAspectRatio: false
+            }
+        });
+    } catch (error) {
+        airQualityWidgets.innerHTML = `<p class="text-danger">Error fetching air quality data. Please try again later.</p>`;
+        console.error(error);
+    }
 });
+
+const apiK = '27803163eb13b8bbb98e6a5c56f7da5b'; 
+const cities = {
+    seoul: { lat: 37.5665, lon: 126.9780 },
+    busan: { lat: 35.1796, lon: 129.0756 },
+    incheon: { lat: 37.4563, lon: 126.7052 },
+    daegu: { lat: 35.8714, lon: 128.6014 },
+    daejeon: { lat: 36.3504, lon: 127.3845 },
+    gwangju: { lat: 35.1595, lon: 126.8526 },
+    ulsan: { lat: 35.5384, lon: 129.3114 },
+    suwon: { lat: 37.2636, lon: 127.0286 },
+    jeju: { lat: 33.4996, lon: 126.5312 }
+};
+
+let map; // Map instance
+let rainLayer; // Rain layer instance
+
+// Function to initialize the map
+function initializeMap() {
+    document.getElementById('mapContainer').style.display = 'block';
+
+    if (!map) {
+        map = L.map('map').setView([37.5665, 126.9780], 7); // Default: Seoul
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        Object.keys(cities).forEach((city) => {
+            const { lat, lon } = cities[city];
+            L.marker([lat, lon])
+                .addTo(map)
+                .bindPopup(`<strong>${city.charAt(0).toUpperCase() + city.slice(1)}</strong><br>Click for rain data.`)
+                .on('click', () => updateRainLayer(lat, lon));
+        });
+    }
+}
+
+async function updateRainLayer(lat, lon) {
+    try {
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiK}`
+        );
+        const data = await response.json();
+        const precipitation = data.rain ? data.rain['1h'] : 0;
+
+        if (rainLayer) {
+            map.removeLayer(rainLayer);
+        }
+
+        rainLayer = L.circle([lat, lon], {
+            radius: precipitation * 10000, 
+            color: 'blue',
+            fillColor: 'blue',
+            fillOpacity: 0.5
+        }).bindPopup(`<strong>${data.name || "Selected Location"}</strong><br>Rain: ${precipitation} mm/hr`).addTo(map);
+
+        map.setView([lat, lon], 10);
+    } catch (error) {
+        console.error("Error fetching precipitation data:", error);
+    }
+}
+
+document.getElementById('showMapButton').addEventListener('click', initializeMap);
+
