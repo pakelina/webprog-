@@ -651,7 +651,7 @@ function redirectToLanguagePage() {
 
 
 // API Key
-const ak = "27803163eb13b8bbb98e6a5c56f7da5b"; 
+const ak = "0ae71d2e563a5e1913d7a52e757a6611"; 
 // Get Sunrise/Sunset Data
 async function fetchSunsetSunrise(lat, lon) {
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${ak}`;
@@ -684,3 +684,101 @@ navigator.geolocation.getCurrentPosition(
         document.getElementById("defaultLocationData").innerHTML = `<p>Unable to fetch location. Please enable location services.</p>`;
     }
 );
+
+document.getElementById("csvFileInput").addEventListener("change", handleFileUpload);
+
+    let csvData = [];
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                csvData = d3.csvParse(content);
+                if (csvData.length > 0) {
+                    populateParameterSelectors(Object.keys(csvData[0]));
+                } else {
+                    alert("The CSV file is empty or invalid.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    function populateParameterSelectors(headers) {
+        const param1Select = document.getElementById("param1");
+        const param2Select = document.getElementById("param2");
+        param1Select.innerHTML = "";
+        param2Select.innerHTML = "";
+
+        headers.forEach(header => {
+            const option1 = document.createElement("option");
+            const option2 = document.createElement("option");
+            option1.value = header;
+            option1.textContent = header;
+            option2.value = header;
+            option2.textContent = header;
+            param1Select.appendChild(option1);
+            param2Select.appendChild(option2);
+        });
+
+        document.getElementById("parameterSelection").style.display = "block";
+        document.getElementById("visualizeBtn").addEventListener("click", visualizeData);
+    }
+
+    function visualizeData() {
+        const param1 = document.getElementById("param1").value;
+        const param2 = document.getElementById("param2").value;
+
+        if (param1 && param2) {
+            const data = csvData.map(row => ({
+                [param1]: +row[param1],
+                [param2]: +row[param2]
+            }));
+
+            renderChart(data, param1, param2);
+        } else {
+            alert("Please select two parameters to visualize.");
+        }
+    }
+
+    function renderChart(data, xKey, yKey) {
+        const width = 600;
+        const height = 400;
+        const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+
+        d3.select("#chart").html(""); // Clear any previous chart
+
+        const svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const x = d3.scaleLinear()
+            .domain(d3.extent(data, d => d[xKey]))
+            .range([margin.left, width - margin.right]);
+
+        const y = d3.scaleLinear()
+            .domain(d3.extent(data, d => d[yKey]))
+            .range([height - margin.bottom, margin.top]);
+
+        const xAxis = g => g
+            .attr("transform", `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(x).ticks(width / 80));
+
+        const yAxis = g => g
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(d3.axisLeft(y));
+
+        svg.append("g").call(xAxis);
+        svg.append("g").call(yAxis);
+
+        svg.append("g")
+            .selectAll("circle")
+            .data(data)
+            .join("circle")
+            .attr("cx", d => x(d[xKey]))
+            .attr("cy", d => y(d[yKey]))
+            .attr("r", 5)
+            .style("fill", "steelblue");
+    }
